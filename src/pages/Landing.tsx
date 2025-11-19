@@ -2,12 +2,15 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Zap, Asterisk, User, Volume2, GraduationCap, FileText, Lightbulb, Lock } from 'lucide-react';
+import LandingHeader from '@/components/landing/LandingHeader';
 
 const Landing = () => {
   const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-white">
+      <LandingHeader />
+
       {/* Hero Section */}
       <section className="max-w-7xl mx-auto px-6 py-20 text-center">
         <h1 className="text-6xl font-normal mb-6">
@@ -30,7 +33,7 @@ const Landing = () => {
       </section>
 
       {/* Subheading */}
-      <section className="max-w-7xl mx-auto px-6 py-12 text-center">
+      <section id="overview" className="max-w-7xl mx-auto px-6 py-12 text-center">
         <h2 className="text-3xl font-normal mb-16">Your AI-Powered Research Partner</h2>
       </section>
 
@@ -226,6 +229,129 @@ const Landing = () => {
               </div>
               <div className="absolute bottom-[-20px] right-[-40px] w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
                 <Volume2 className="w-6 h-6 text-blue-600" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Plans Section - Pricing */}
+      <section id="plans" className="max-w-7xl mx-auto px-6 py-20">
+        <div className="text-center mb-16">
+          <h2 className="text-5xl font-normal mb-6">Polynote</h2>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-12">
+            Power users, teams, and organizations, upgrade to Pro for the most capable AI research and thinking partner.
+          </p>
+          <h3 className="text-3xl font-normal">Unlock premium features</h3>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+          {/* Standard Plan */}
+          <div className="bg-white rounded-2xl border border-gray-200 p-8">
+            <h3 className="text-2xl font-normal mb-4 text-center">Polynote Standard</h3>
+            <p className="text-center text-blue-600 mb-8">Free for individuals to get started</p>
+
+            <div className="space-y-4">
+              <div className="flex items-start space-x-3">
+                <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <svg className="w-3 h-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <p className="text-gray-700">Built with OpenAI, Anthropic AND Gemini models</p>
+              </div>
+
+              <div className="flex items-start space-x-3">
+                <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <svg className="w-3 h-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <p className="text-gray-700">Upload PDFs, websites, Google Docs and Slides, YouTube URLs, and more</p>
+              </div>
+
+              <div className="flex items-start space-x-3">
+                <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <svg className="w-3 h-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <p className="text-gray-700">Create one-click summaries, FAQs, timelines, and briefing docs</p>
+              </div>
+
+              <div className="flex items-start space-x-3">
+                <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <svg className="w-3 h-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <p className="text-gray-700">Generate Audio Overviews and listen on-the-go</p>
+              </div>
+
+              <div className="flex items-start space-x-3">
+                <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <svg className="w-3 h-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <p className="text-gray-700">Ask questions for deeper insights and get answers with citations</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Pro Plan */}
+          <div className="relative">
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-green-400 via-cyan-400 to-blue-500 rounded-2xl blur opacity-75"></div>
+            <div className="relative bg-white rounded-2xl p-8">
+              <h3 className="text-2xl font-normal mb-4 text-center">Polynote in Pro</h3>
+
+              <div className="bg-gradient-to-r from-green-100 to-cyan-50 rounded-lg p-3 mb-6 flex items-center justify-center space-x-2">
+                <Zap className="w-4 h-4" />
+                <p className="text-sm font-medium">Everything in Polynote, plus the following:</p>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex items-start space-x-3">
+                  <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <svg className="w-3 h-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <p className="text-gray-700">Get 5x more Audio and Video Overviews, notebooks, queries and more</p>
+                </div>
+
+                <div className="flex items-start space-x-3">
+                  <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <svg className="w-3 h-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <p className="text-gray-700">Access to premium features</p>
+                </div>
+
+                <div className="flex items-start space-x-3">
+                  <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <svg className="w-3 h-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <p className="text-gray-700">Create shared notebooks for your team and get usage analytics</p>
+                </div>
+
+                <div className="flex items-start space-x-3">
+                  <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <svg className="w-3 h-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <p className="text-gray-700">Additional privacy and security</p>
+                </div>
+              </div>
+
+              <div className="mt-6 text-center">
+                <a href="#" className="text-blue-600 text-sm hover:underline">
+                  Learn about more benefits and pricing
+                </a>
               </div>
             </div>
           </div>
