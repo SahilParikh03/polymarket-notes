@@ -1,0 +1,36 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cat:*)",
+      "Read(//Users/kylo/Documents/**)",
+      "Bash(git clone:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Read(//var/folders/1p/f7d1kr6d1_18dynx1ppkrxpc0000gn/T/TemporaryItems/NSIRD_screencaptureui_bHUcvj/**)",
+      "Read(//var/folders/1p/f7d1kr6d1_18dynx1ppkrxpc0000gn/T/TemporaryItems/NSIRD_screencaptureui_w2MnCa/**)",
+      "Read(//var/folders/1p/f7d1kr6d1_18dynx1ppkrxpc0000gn/T/TemporaryItems/NSIRD_screencaptureui_Ghk3as/**)",
+      "Bash(supabase link:*)",
+      "Bash(supabase db remote:*)",
+      "Bash(supabase migration list:*)",
+      "Bash(supabase db push:*)",
+      "Bash(npm install:*)",
+      "Bash(supabase functions logs:*)",
+      "Bash(supabase secrets set:*)",
+      "Bash(supabase secrets list:*)",
+      "Bash(supabase functions deploy:*)",
+      "Bash(curl:*)",
+      "Read(//var/folders/1p/f7d1kr6d1_18dynx1ppkrxpc0000gn/T/TemporaryItems/NSIRD_screencaptureui_kRdMVq/**)",
+      "Read(//Users/kylo/Desktop/**)",
+      "Read(//var/folders/1p/f7d1kr6d1_18dynx1ppkrxpc0000gn/T/TemporaryItems/NSIRD_screencaptureui_VJfti1/**)",
+      "Read(//var/folders/1p/f7d1kr6d1_18dynx1ppkrxpc0000gn/T/TemporaryItems/NSIRD_screencaptureui_YQgRMF/**)",
+      "Read(//var/folders/1p/f7d1kr6d1_18dynx1ppkrxpc0000gn/T/TemporaryItems/NSIRD_screencaptureui_iGvF5G/**)",
+      "Read(//var/folders/1p/f7d1kr6d1_18dynx1ppkrxpc0000gn/T/TemporaryItems/NSIRD_screencaptureui_SSHwJd/**)",
+      "Read(//var/folders/1p/f7d1kr6d1_18dynx1ppkrxpc0000gn/T/TemporaryItems/NSIRD_screencaptureui_0SSP3y/**)",
+      "Read(//var/folders/1p/f7d1kr6d1_18dynx1ppkrxpc0000gn/T/TemporaryItems/NSIRD_screencaptureui_Bc9V0a/**)",
+      "Read(//var/folders/1p/f7d1kr6d1_18dynx1ppkrxpc0000gn/T/TemporaryItems/NSIRD_screencaptureui_G3FjQH/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
