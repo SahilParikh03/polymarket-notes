@@ -50,21 +50,12 @@ const Landing = () => {
               information that matters most to you.
             </p>
           </div>
-          <div className="bg-gray-900 rounded-3xl p-8 min-h-[400px] flex items-center justify-center">
-            <div className="w-full">
-              <div className="bg-purple-400 rounded-full w-32 h-32 mx-auto mb-6 flex items-center justify-center text-sm font-medium">
-                INSTANT STUDY GUIDE!
-              </div>
-              <div className="space-y-3">
-                <div className="bg-gray-800 rounded-full px-6 py-3 text-white text-center">+ Add note</div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-gray-800 rounded-full px-4 py-2 text-white text-sm text-center">Study guide</div>
-                  <div className="bg-gray-800 rounded-full px-4 py-2 text-white text-sm text-center">Briefing doc</div>
-                  <div className="bg-gray-800 rounded-full px-4 py-2 text-white text-sm text-center">FAQ</div>
-                  <div className="bg-gray-800 rounded-full px-4 py-2 text-white text-sm text-center">Timeline</div>
-                </div>
-              </div>
-            </div>
+          <div className="rounded-3xl overflow-hidden">
+            <img
+              src="/instant-insights.png"
+              alt="Instant insights - Polynote AI features including Study guide, Briefing doc, FAQ, and Timeline"
+              className="w-full h-auto"
+            />
           </div>
         </div>
       </section>
