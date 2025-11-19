@@ -28,7 +28,8 @@
       "Read(//var/folders/1p/f7d1kr6d1_18dynx1ppkrxpc0000gn/T/TemporaryItems/NSIRD_screencaptureui_SSHwJd/**)",
       "Read(//var/folders/1p/f7d1kr6d1_18dynx1ppkrxpc0000gn/T/TemporaryItems/NSIRD_screencaptureui_0SSP3y/**)",
       "Read(//var/folders/1p/f7d1kr6d1_18dynx1ppkrxpc0000gn/T/TemporaryItems/NSIRD_screencaptureui_Bc9V0a/**)",
-      "Read(//var/folders/1p/f7d1kr6d1_18dynx1ppkrxpc0000gn/T/TemporaryItems/NSIRD_screencaptureui_G3FjQH/**)"
+      "Read(//var/folders/1p/f7d1kr6d1_18dynx1ppkrxpc0000gn/T/TemporaryItems/NSIRD_screencaptureui_G3FjQH/**)",
+      "Bash(git pull:*)"
     ],
     "deny": [],
     "ask": []
