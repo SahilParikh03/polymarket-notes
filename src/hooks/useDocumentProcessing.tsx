@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 
 import { useMutation } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -16,7 +17,7 @@ export const useDocumentProcessing = () => {
       filePath: string;
       sourceType: string;
     }) => {
-      console.log('Initiating document processing for:', { sourceId, filePath, sourceType });
+      logger.log('Initiating document processing for:', { sourceId, filePath, sourceType });
 
       const { data, error } = await supabase.functions.invoke('process-document', {
         body: {
@@ -27,17 +28,17 @@ export const useDocumentProcessing = () => {
       });
 
       if (error) {
-        console.error('Document processing error:', error);
+        logger.error('Document processing error:', error);
         throw error;
       }
 
       return data;
     },
     onSuccess: (data) => {
-      console.log('Document processing initiated successfully:', data);
+      logger.log('Document processing initiated successfully:', data);
     },
     onError: (error) => {
-      console.error('Failed to initiate document processing:', error);
+      logger.error('Failed to initiate document processing:', error);
       // Error will be handled by parent component via Promise.allSettled
     },
   });

@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 
 import React, { useState } from 'react';
 import {
@@ -34,7 +35,7 @@ const PasteTextDialog = ({ open, onOpenChange, onSubmit }: PasteTextDialogProps)
       setContent('');
       onOpenChange(false);
     } catch (error) {
-      console.error('Error adding text source:', error);
+      logger.error('Error adding text source:', error);
     } finally {
       setIsLoading(false);
     }
@@ -45,7 +46,7 @@ const PasteTextDialog = ({ open, onOpenChange, onSubmit }: PasteTextDialogProps)
       const text = await navigator.clipboard.readText();
       setContent(text);
     } catch (error) {
-      console.error('Failed to read clipboard:', error);
+      logger.error('Failed to read clipboard:', error);
     }
   };
 

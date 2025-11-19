@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -41,7 +42,7 @@ interface N8nAiResponseContent {
 }
 
 const transformMessage = (item: any, sourceMap: Map<string, any>): EnhancedChatMessage => {
-  console.log('Processing item:', item);
+  logger.log('Processing item:', item);
   
   // Handle the message format based on your JSON examples
   let transformedMessage: EnhancedChatMessage['message'];
@@ -116,7 +117,7 @@ const transformMessage = (item: any, sourceMap: Map<string, any>): EnhancedChatM
           };
         }
       } catch (parseError) {
-        console.log('Failed to parse AI content as JSON, treating as plain text:', parseError);
+        logger.log('Failed to parse AI content as JSON, treating as plain text:', parseError);
         // If parsing fails, treat as regular string content
         transformedMessage = {
           type: 'ai',
@@ -152,7 +153,7 @@ const transformMessage = (item: any, sourceMap: Map<string, any>): EnhancedChatM
     };
   }
 
-  console.log('Transformed message:', transformedMessage);
+  logger.log('Transformed message:', transformedMessage);
 
   return {
     id: item.id,
@@ -191,8 +192,8 @@ export const useChatMessages = (notebookId?: string) => {
       
       const sourceMap = new Map(sourcesData?.map(s => [s.id, s]) || []);
       
-      console.log('Raw data from database:', data);
-      console.log('Sources map:', sourceMap);
+      logger.log('Raw data from database:', data);
+      logger.log('Sources map:', sourceMap);
       
       // Transform the data to match our expected format
       return data.map((item) => transformMessage(item, sourceMap));
@@ -206,7 +207,7 @@ export const useChatMessages = (notebookId?: string) => {
   useEffect(() => {
     if (!notebookId || !user) return;
 
-    console.log('Setting up Realtime subscription for notebook:', notebookId);
+    logger.log('Setting up Realtime subscription for notebook:', notebookId);
 
     const channel = supabase
       .channel('chat-messages')
@@ -219,7 +220,7 @@ export const useChatMessages = (notebookId?: string) => {
           filter: `session_id=eq.${notebookId}`
         },
         async (payload) => {
-          console.log('Realtime: New message received:', payload);
+          logger.log('Realtime: New message received:', payload);
           
           // Fetch sources for proper transformation
           const { data: sourcesData } = await supabase
@@ -237,21 +238,21 @@ export const useChatMessages = (notebookId?: string) => {
             // Check if message already exists to prevent duplicates
             const messageExists = oldMessages.some(msg => msg.id === newMessage.id);
             if (messageExists) {
-              console.log('Message already exists, skipping:', newMessage.id);
+              logger.log('Message already exists, skipping:', newMessage.id);
               return oldMessages;
             }
             
-            console.log('Adding new message to cache:', newMessage);
+            logger.log('Adding new message to cache:', newMessage);
             return [...oldMessages, newMessage];
           });
         }
       )
       .subscribe((status) => {
-        console.log('Realtime subscription status:', status);
+        logger.log('Realtime subscription status:', status);
       });
 
     return () => {
-      console.log('Cleaning up Realtime subscription');
+      logger.log('Cleaning up Realtime subscription');
       supabase.removeChannel(channel);
     };
   }, [notebookId, user, queryClient]);
@@ -281,7 +282,7 @@ export const useChatMessages = (notebookId?: string) => {
     },
     onSuccess: () => {
       // The response will appear via Realtime, so we don't need to do anything here
-      console.log('Message sent to webhook successfully');
+      logger.log('Message sent to webhook successfully');
     },
   });
 
@@ -289,7 +290,7 @@ export const useChatMessages = (notebookId?: string) => {
     mutationFn: async (notebookId: string) => {
       if (!user) throw new Error('User not authenticated');
 
-      console.log('Deleting chat history for notebook:', notebookId);
+      logger.log('Deleting chat history for notebook:', notebookId);
       
       const { error } = await supabase
         .from('n8n_chat_histories')
@@ -297,15 +298,15 @@ export const useChatMessages = (notebookId?: string) => {
         .eq('session_id', notebookId);
 
       if (error) {
-        console.error('Error deleting chat history:', error);
+        logger.error('Error deleting chat history:', error);
         throw error;
       }
       
-      console.log('Chat history deleted successfully');
+      logger.log('Chat history deleted successfully');
       return notebookId;
     },
     onSuccess: (notebookId) => {
-      console.log('Chat history cleared for notebook:', notebookId);
+      logger.log('Chat history cleared for notebook:', notebookId);
       toast({
         title: "Chat history cleared",
         description: "All messages have been deleted successfully.",
@@ -318,7 +319,7 @@ export const useChatMessages = (notebookId?: string) => {
       });
     },
     onError: (error) => {
-      console.error('Failed to delete chat history:', error);
+      logger.error('Failed to delete chat history:', error);
       toast({
         title: "Error",
         description: "Failed to clear chat history. Please try again.",

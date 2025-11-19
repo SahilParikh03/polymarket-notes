@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import Landing from "./pages/Landing";
 import Dashboard from "./pages/Dashboard";
 import Notebook from "./pages/Notebook";
@@ -17,33 +18,39 @@ const queryClient = new QueryClient();
 const AppContent = () => {
   return (
     <Routes>
-      <Route path="/" element={<Landing />} />
-      <Route path="/auth" element={<Auth />} />
+      <Route path="/" element={<ErrorBoundary><Landing /></ErrorBoundary>} />
+      <Route path="/auth" element={<ErrorBoundary><Auth /></ErrorBoundary>} />
       <Route
         path="/dashboard"
         element={
-          <ProtectedRoute fallback={<Navigate to="/auth" replace />}>
-            <Dashboard />
-          </ProtectedRoute>
+          <ErrorBoundary>
+            <ProtectedRoute fallback={<Navigate to="/auth" replace />}>
+              <Dashboard />
+            </ProtectedRoute>
+          </ErrorBoundary>
         }
       />
       <Route
         path="/notebook"
         element={
-          <ProtectedRoute fallback={<Navigate to="/auth" replace />}>
-            <Notebook />
-          </ProtectedRoute>
+          <ErrorBoundary>
+            <ProtectedRoute fallback={<Navigate to="/auth" replace />}>
+              <Notebook />
+            </ProtectedRoute>
+          </ErrorBoundary>
         }
       />
       <Route
         path="/notebook/:id"
         element={
-          <ProtectedRoute fallback={<Navigate to="/auth" replace />}>
-            <Notebook />
-          </ProtectedRoute>
+          <ErrorBoundary>
+            <ProtectedRoute fallback={<Navigate to="/auth" replace />}>
+              <Notebook />
+            </ProtectedRoute>
+          </ErrorBoundary>
         }
       />
-      <Route path="*" element={<NotFound />} />
+      <Route path="*" element={<ErrorBoundary><NotFound /></ErrorBoundary>} />
     </Routes>
   );
 };

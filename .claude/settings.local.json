@@ -36,7 +36,15 @@
       "Read(//var/folders/1p/f7d1kr6d1_18dynx1ppkrxpc0000gn/T/TemporaryItems/NSIRD_screencaptureui_o8RZ96/**)",
       "Read(//var/folders/1p/f7d1kr6d1_18dynx1ppkrxpc0000gn/T/TemporaryItems/NSIRD_screencaptureui_1tpOUD/**)",
       "Read(//var/folders/1p/f7d1kr6d1_18dynx1ppkrxpc0000gn/T/TemporaryItems/NSIRD_screencaptureui_pkiMdH/**)",
-      "Read(//var/folders/1p/f7d1kr6d1_18dynx1ppkrxpc0000gn/T/TemporaryItems/NSIRD_screencaptureui_si3yFz/**)"
+      "Read(//var/folders/1p/f7d1kr6d1_18dynx1ppkrxpc0000gn/T/TemporaryItems/NSIRD_screencaptureui_si3yFz/**)",
+      "Bash(find:*)",
+      "Bash(while read file)",
+      "Bash(do echo \"=== $file ===\")",
+      "Bash(done)",
+      "Bash(xargs:*)",
+      "Bash(awk:*)",
+      "Bash(git rm:*)",
+      "Bash(npm run build:*)"
     ],
     "deny": [],
     "ask": []

@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -11,7 +12,7 @@ export const useNotebookDelete = () => {
 
   const deleteNotebook = useMutation({
     mutationFn: async (notebookId: string) => {
-      console.log('Starting notebook deletion process for:', notebookId);
+      logger.log('Starting notebook deletion process for:', notebookId);
       
       try {
         // First, get the notebook details for better error reporting
@@ -22,11 +23,11 @@ export const useNotebookDelete = () => {
           .single();
 
         if (fetchError) {
-          console.error('Error fetching notebook:', fetchError);
+          logger.error('Error fetching notebook:', fetchError);
           throw new Error('Failed to find notebook');
         }
 
-        console.log('Found notebook to delete:', notebook.title);
+        logger.log('Found notebook to delete:', notebook.title);
 
         // Get all sources for this notebook to delete their files
         const { data: sources, error: sourcesError } = await supabase
@@ -35,31 +36,31 @@ export const useNotebookDelete = () => {
           .eq('notebook_id', notebookId);
 
         if (sourcesError) {
-          console.error('Error fetching sources for notebook:', sourcesError);
+          logger.error('Error fetching sources for notebook:', sourcesError);
           throw new Error('Failed to fetch sources for cleanup');
         }
 
-        console.log(`Found ${sources?.length || 0} sources to clean up`);
+        logger.log(`Found ${sources?.length || 0} sources to clean up`);
 
         // Delete all files from storage for sources that have file_path
         const filesToDelete = sources?.filter(source => source.file_path).map(source => source.file_path) || [];
         
         if (filesToDelete.length > 0) {
-          console.log('Deleting files from storage:', filesToDelete);
+          logger.log('Deleting files from storage:', filesToDelete);
           
           const { error: storageError } = await supabase.storage
             .from('sources')
             .remove(filesToDelete);
 
           if (storageError) {
-            console.error('Error deleting files from storage:', storageError);
+            logger.error('Error deleting files from storage:', storageError);
             // Don't throw here - we still want to delete the notebook
             // even if some files can't be deleted (they might already be gone)
           } else {
-            console.log('All files deleted successfully from storage');
+            logger.log('All files deleted successfully from storage');
           }
         } else {
-          console.log('No files to delete from storage (URL-based sources or no file_paths)');
+          logger.log('No files to delete from storage (URL-based sources or no file_paths)');
         }
 
         // Delete the notebook - this will cascade delete all sources
@@ -69,19 +70,19 @@ export const useNotebookDelete = () => {
           .eq('id', notebookId);
 
         if (deleteError) {
-          console.error('Error deleting notebook:', deleteError);
+          logger.error('Error deleting notebook:', deleteError);
           throw deleteError;
         }
         
-        console.log('Notebook deleted successfully with cascade deletion');
+        logger.log('Notebook deleted successfully with cascade deletion');
         return notebook;
       } catch (error) {
-        console.error('Error in deletion process:', error);
+        logger.error('Error in deletion process:', error);
         throw error;
       }
     },
     onSuccess: (deletedNotebook, notebookId) => {
-      console.log('Delete mutation success, invalidating queries');
+      logger.log('Delete mutation success, invalidating queries');
       
       // Invalidate all related queries
       queryClient.invalidateQueries({ queryKey: ['notebooks', user?.id] });
@@ -94,7 +95,7 @@ export const useNotebookDelete = () => {
       });
     },
     onError: (error: any) => {
-      console.error('Delete mutation error:', error);
+      logger.error('Delete mutation error:', error);
       
       let errorMessage = "Failed to delete the notebook. Please try again.";
       

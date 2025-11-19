@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -11,7 +12,7 @@ export const useSourceDelete = () => {
 
   const deleteSource = useMutation({
     mutationFn: async (sourceId: string) => {
-      console.log('Starting source deletion process for:', sourceId);
+      logger.log('Starting source deletion process for:', sourceId);
       
       try {
         // First, get the source details including file information
@@ -22,29 +23,29 @@ export const useSourceDelete = () => {
           .single();
 
         if (fetchError) {
-          console.error('Error fetching source:', fetchError);
+          logger.error('Error fetching source:', fetchError);
           throw new Error('Failed to find source');
         }
 
-        console.log('Found source to delete:', source.title, 'with file_path:', source.file_path);
+        logger.log('Found source to delete:', source.title, 'with file_path:', source.file_path);
 
         // Delete the file from storage if it exists
         if (source.file_path) {
-          console.log('Deleting file from storage:', source.file_path);
+          logger.log('Deleting file from storage:', source.file_path);
           
           const { error: storageError } = await supabase.storage
             .from('sources')
             .remove([source.file_path]);
 
           if (storageError) {
-            console.error('Error deleting file from storage:', storageError);
+            logger.error('Error deleting file from storage:', storageError);
             // Don't throw here - we still want to delete the database record
             // even if the file deletion fails (file might already be gone)
           } else {
-            console.log('File deleted successfully from storage');
+            logger.log('File deleted successfully from storage');
           }
         } else {
-          console.log('No file to delete from storage (URL-based source or no file_path)');
+          logger.log('No file to delete from storage (URL-based source or no file_path)');
         }
 
         // Delete the source record from the database
@@ -54,19 +55,19 @@ export const useSourceDelete = () => {
           .eq('id', sourceId);
 
         if (deleteError) {
-          console.error('Error deleting source from database:', deleteError);
+          logger.error('Error deleting source from database:', deleteError);
           throw deleteError;
         }
         
-        console.log('Source deleted successfully from database');
+        logger.log('Source deleted successfully from database');
         return source;
       } catch (error) {
-        console.error('Error in source deletion process:', error);
+        logger.error('Error in source deletion process:', error);
         throw error;
       }
     },
     onSuccess: (deletedSource) => {
-      console.log('Delete mutation success, invalidating queries');
+      logger.log('Delete mutation success, invalidating queries');
       queryClient.invalidateQueries({ queryKey: ['sources'] });
       toast({
         title: "Source deleted",
@@ -74,7 +75,7 @@ export const useSourceDelete = () => {
       });
     },
     onError: (error: any) => {
-      console.error('Delete mutation error:', error);
+      logger.error('Delete mutation error:', error);
       
       let errorMessage = "Failed to delete the source. Please try again.";
       

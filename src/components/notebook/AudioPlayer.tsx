@@ -5,6 +5,7 @@ import { Slider } from '@/components/ui/slider';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Play, Pause, RotateCcw, Volume2, Download, MoreVertical, Trash2, Loader2, RefreshCw, AlertTriangle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { logger } from '@/utils/logger';
 
 interface AudioPlayerProps {
   audioUrl: string;
@@ -56,14 +57,14 @@ const AudioPlayer = ({
     };
     const handleEnded = () => setIsPlaying(false);
     const handleError = async (e: Event) => {
-      console.error('Audio error:', e);
+      logger.error('Audio error:', e);
       setLoading(false);
       setIsPlaying(false);
       
       // If the URL has expired and we have a notebookId, try to refresh it automatically
       if ((isExpired || audioError?.includes('403') || audioError?.includes('expired')) && 
           notebookId && onUrlRefresh && retryCount < 2 && !autoRetryInProgress) {
-        console.log('Audio URL expired or access denied, attempting automatic refresh...');
+        logger.log('Audio URL expired or access denied, attempting automatic refresh...');
         setAutoRetryInProgress(true);
         setRetryCount(prev => prev + 1);
         onUrlRefresh(notebookId);
@@ -117,7 +118,7 @@ const AudioPlayer = ({
   useEffect(() => {
     const audio = audioRef.current;
     if (audio && autoRetryInProgress) {
-      console.log('Reloading audio with new URL...');
+      logger.log('Reloading audio with new URL...');
       audio.load();
     }
   }, [audioUrl, autoRetryInProgress]);
@@ -132,7 +133,7 @@ const AudioPlayer = ({
       const playPromise = audio.play();
       if (playPromise !== undefined) {
         playPromise.catch(error => {
-          console.error('Play failed:', error);
+          logger.error('Play failed:', error);
           setAudioError('Playback failed');
         });
       }
@@ -215,7 +216,7 @@ const AudioPlayer = ({
         description: "Your audio file is being downloaded.",
       });
     } catch (error) {
-      console.error('Download failed:', error);
+      logger.error('Download failed:', error);
       toast({
         title: "Download Failed",
         description: "Failed to download the audio file. Please try again.",
@@ -243,7 +244,7 @@ const AudioPlayer = ({
       
       // First, try to remove all files in the notebook folder from storage
       try {
-        console.log('Attempting to list files in folder:', notebookId);
+        logger.log('Attempting to list files in folder:', notebookId);
         
         // List all files in the notebook folder
         const { data: files, error: listError } = await supabase.storage
@@ -251,24 +252,24 @@ const AudioPlayer = ({
           .list(notebookId);
 
         if (listError) {
-          console.error('Error listing files:', listError);
+          logger.error('Error listing files:', listError);
         } else if (files && files.length > 0) {
           // Delete all files in the folder
           const filePaths = files.map(file => `${notebookId}/${file.name}`);
-          console.log('Deleting files:', filePaths);
+          logger.log('Deleting files:', filePaths);
           
           const { error: deleteError } = await supabase.storage
             .from('audio')
             .remove(filePaths);
 
           if (deleteError) {
-            console.error('Error deleting files from storage:', deleteError);
+            logger.error('Error deleting files from storage:', deleteError);
           } else {
-            console.log('Successfully deleted files from storage');
+            logger.log('Successfully deleted files from storage');
           }
         }
       } catch (storageError) {
-        console.error('Storage operation failed:', storageError);
+        logger.error('Storage operation failed:', storageError);
         // Continue with database update even if storage deletion fails
       }
 
@@ -283,7 +284,7 @@ const AudioPlayer = ({
         .eq('id', notebookId);
 
       if (error) {
-        console.error('Error updating notebook:', error);
+        logger.error('Error updating notebook:', error);
         throw error;
       }
 
@@ -296,7 +297,7 @@ const AudioPlayer = ({
       onDeleted?.();
 
     } catch (error) {
-      console.error('Failed to delete audio:', error);
+      logger.error('Failed to delete audio:', error);
       toast({
         title: "Delete Failed",
         description: "Failed to delete the audio overview. Please try again.",

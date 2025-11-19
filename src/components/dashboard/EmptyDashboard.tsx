@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Upload, FileText, Globe, Video, Mic } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useNotebooks } from '@/hooks/useNotebooks';
+import { logger } from '@/utils/logger';
 const EmptyDashboard = () => {
   const navigate = useNavigate();
   const {
@@ -10,18 +11,18 @@ const EmptyDashboard = () => {
     isCreating
   } = useNotebooks();
   const handleCreateNotebook = () => {
-    console.log('Create notebook button clicked');
-    console.log('isCreating:', isCreating);
+    logger.log('Create notebook button clicked');
+    logger.log('isCreating:', isCreating);
     createNotebook({
       title: 'Untitled notebook',
       description: ''
     }, {
       onSuccess: data => {
-        console.log('Navigating to notebook:', data.id);
+        logger.log('Navigating to notebook:', data.id);
         navigate(`/notebook/${data.id}`);
       },
       onError: error => {
-        console.error('Failed to create notebook:', error);
+        logger.error('Failed to create notebook:', error);
       }
     });
   };

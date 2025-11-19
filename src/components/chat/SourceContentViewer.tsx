@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 
 import React, { useEffect, useRef, useState } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -41,7 +42,7 @@ const SourceContentViewer = ({
     typeof citation.chunk_lines_to === 'number' &&
     citation.chunk_lines_from > 0;
 
-  console.log('SourceContentViewer: Render with citation', {
+  logger.log('SourceContentViewer: Render with citation', {
     citationId: citation?.citation_id,
     sourceId: citation?.source_id,
     hasValidCitationLines,
@@ -52,7 +53,7 @@ const SourceContentViewer = ({
 
   // Auto-scroll to highlighted content when citation changes and has valid line data
   useEffect(() => {
-    console.log('SourceContentViewer: Auto-scroll effect triggered', {
+    logger.log('SourceContentViewer: Auto-scroll effect triggered', {
       hasValidCitationLines,
       citationId: citation?.citation_id,
       hasHighlightedRef: !!highlightedContentRef.current,
@@ -60,12 +61,12 @@ const SourceContentViewer = ({
     });
 
     if (hasValidCitationLines && highlightedContentRef.current && scrollAreaViewportRef.current) {
-      console.log('SourceContentViewer: Starting auto-scroll process');
+      logger.log('SourceContentViewer: Starting auto-scroll process');
       
       // Increased delay to ensure DOM has fully updated
       const timer = setTimeout(() => {
         if (highlightedContentRef.current && scrollAreaViewportRef.current) {
-          console.log('SourceContentViewer: Executing auto-scroll');
+          logger.log('SourceContentViewer: Executing auto-scroll');
           
           // Find the actual viewport element within the ScrollArea
           const scrollAreaElement = scrollAreaViewportRef.current;
@@ -74,7 +75,7 @@ const SourceContentViewer = ({
           if (viewport && highlightedContentRef.current) {
             const highlightedElement = highlightedContentRef.current;
             
-            console.log('SourceContentViewer: Scroll calculation', {
+            logger.log('SourceContentViewer: Scroll calculation', {
               highlightedOffsetTop: highlightedElement.offsetTop,
               highlightedHeight: highlightedElement.clientHeight,
               viewportHeight: viewport.clientHeight,
@@ -85,14 +86,14 @@ const SourceContentViewer = ({
             const scrollTop = highlightedElement.offsetTop - (viewport.clientHeight / 2) + (highlightedElement.clientHeight / 2);
             const targetScrollTop = Math.max(0, scrollTop);
             
-            console.log('SourceContentViewer: Scrolling to position', { targetScrollTop });
+            logger.log('SourceContentViewer: Scrolling to position', { targetScrollTop });
             
             viewport.scrollTo({
               top: targetScrollTop,
               behavior: 'smooth'
             });
           } else {
-            console.log('SourceContentViewer: Viewport or highlighted element not found', {
+            logger.log('SourceContentViewer: Viewport or highlighted element not found', {
               viewport: !!viewport,
               highlightedElement: !!highlightedContentRef.current
             });
@@ -107,7 +108,7 @@ const SourceContentViewer = ({
   // Close guide when a real citation is clicked (has valid line data)
   useEffect(() => {
     if (hasValidCitationLines) {
-      console.log('SourceContentViewer: Closing guide for real citation');
+      logger.log('SourceContentViewer: Closing guide for real citation');
       setAccordionValue("");
     }
   }, [hasValidCitationLines]);
@@ -160,12 +161,12 @@ const SourceContentViewer = ({
     // For real citations with valid line data, highlight the specific lines
     startLine = citation.chunk_lines_from!;
     endLine = citation.chunk_lines_to!;
-    console.log('SourceContentViewer: Will highlight lines', { startLine, endLine });
+    logger.log('SourceContentViewer: Will highlight lines', { startLine, endLine });
   } else {
     // For source list clicks or citations without line data, don't highlight
     startLine = -1;
     endLine = -1;
-    console.log('SourceContentViewer: No highlighting (no valid line data)');
+    logger.log('SourceContentViewer: No highlighting (no valid line data)');
   }
 
   const renderHighlightedContent = () => {

@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -7,7 +8,7 @@ export const useNotebookUpdate = () => {
 
   const updateNotebook = useMutation({
     mutationFn: async ({ id, updates }: { id: string; updates: { title?: string; description?: string } }) => {
-      console.log('Updating notebook:', id, updates);
+      logger.log('Updating notebook:', id, updates);
       
       const { data, error } = await supabase
         .from('notebooks')
@@ -17,20 +18,20 @@ export const useNotebookUpdate = () => {
         .single();
 
       if (error) {
-        console.error('Error updating notebook:', error);
+        logger.error('Error updating notebook:', error);
         throw error;
       }
       
-      console.log('Notebook updated successfully:', data);
+      logger.log('Notebook updated successfully:', data);
       return data;
     },
     onSuccess: (data) => {
-      console.log('Mutation success, invalidating queries');
+      logger.log('Mutation success, invalidating queries');
       queryClient.invalidateQueries({ queryKey: ['notebook', data.id] });
       queryClient.invalidateQueries({ queryKey: ['notebooks'] });
     },
     onError: (error) => {
-      console.error('Mutation error:', error);
+      logger.error('Mutation error:', error);
     },
   });
 

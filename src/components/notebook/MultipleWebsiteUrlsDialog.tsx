@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -37,7 +38,7 @@ const MultipleWebsiteUrlsDialog = ({
       setUrlsText('');
       onOpenChange(false);
     } catch (error) {
-      console.error('Error submitting URLs:', error);
+      logger.error('Error submitting URLs:', error);
     } finally {
       setIsSubmitting(false);
     }

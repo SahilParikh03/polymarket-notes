@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
@@ -41,7 +42,7 @@ const NoteEditor = ({ note, onSave, onDelete, onCancel, isLoading, onCitationCli
   const handleEdit = () => {
     // Only allow editing of user notes, not AI responses
     if (note?.source_type === 'ai_response') {
-      console.log('NoteEditor: Cannot edit AI response note');
+      logger.log('NoteEditor: Cannot edit AI response note');
       return;
     }
     setIsEditing(true);
@@ -73,7 +74,7 @@ const NoteEditor = ({ note, onSave, onDelete, onCancel, isLoading, onCitationCli
         setTitle(data.title);
       }
     } catch (error) {
-      console.error('Error generating title:', error);
+      logger.error('Error generating title:', error);
     } finally {
       setIsGeneratingTitle(false);
     }

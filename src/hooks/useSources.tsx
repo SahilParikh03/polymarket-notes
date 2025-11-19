@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -35,7 +36,7 @@ export const useSources = (notebookId?: string) => {
   useEffect(() => {
     if (!notebookId || !user) return;
 
-    console.log('Setting up Realtime subscription for sources table, notebook:', notebookId);
+    logger.log('Setting up Realtime subscription for sources table, notebook:', notebookId);
 
     const channel = supabase
       .channel('sources-changes')
@@ -48,7 +49,7 @@ export const useSources = (notebookId?: string) => {
           filter: `notebook_id=eq.${notebookId}`
         },
         (payload: any) => {
-          console.log('Realtime: Sources change received:', payload);
+          logger.log('Realtime: Sources change received:', payload);
           
           // Update the query cache based on the event type
           queryClient.setQueryData(['sources', notebookId], (oldSources: any[] = []) => {
@@ -58,16 +59,16 @@ export const useSources = (notebookId?: string) => {
                 const newSource = payload.new as any;
                 const existsInsert = oldSources.some(source => source.id === newSource?.id);
                 if (existsInsert) {
-                  console.log('Source already exists, skipping INSERT:', newSource?.id);
+                  logger.log('Source already exists, skipping INSERT:', newSource?.id);
                   return oldSources;
                 }
-                console.log('Adding new source to cache:', newSource);
+                logger.log('Adding new source to cache:', newSource);
                 return [newSource, ...oldSources];
                 
               case 'UPDATE':
                 // Update existing source
                 const updatedSource = payload.new as any;
-                console.log('Updating source in cache:', updatedSource?.id);
+                logger.log('Updating source in cache:', updatedSource?.id);
                 return oldSources.map(source => 
                   source.id === updatedSource?.id ? updatedSource : source
                 );
@@ -75,22 +76,22 @@ export const useSources = (notebookId?: string) => {
               case 'DELETE':
                 // Remove deleted source
                 const deletedSource = payload.old as any;
-                console.log('Removing source from cache:', deletedSource?.id);
+                logger.log('Removing source from cache:', deletedSource?.id);
                 return oldSources.filter(source => source.id !== deletedSource?.id);
                 
               default:
-                console.log('Unknown event type:', payload.eventType);
+                logger.log('Unknown event type:', payload.eventType);
                 return oldSources;
             }
           });
         }
       )
       .subscribe((status) => {
-        console.log('Realtime subscription status for sources:', status);
+        logger.log('Realtime subscription status for sources:', status);
       });
 
     return () => {
-      console.log('Cleaning up Realtime subscription for sources');
+      logger.log('Cleaning up Realtime subscription for sources');
       supabase.removeChannel(channel);
     };
   }, [notebookId, user, queryClient]);
@@ -129,7 +130,7 @@ export const useSources = (notebookId?: string) => {
       return data;
     },
     onSuccess: async (newSource) => {
-      console.log('Source added successfully:', newSource);
+      logger.log('Source added successfully:', newSource);
       
       // The Realtime subscription will handle updating the cache
       // But we still check for first source to trigger generation
@@ -137,7 +138,7 @@ export const useSources = (notebookId?: string) => {
       const isFirstSource = currentSources.length === 0;
       
       if (isFirstSource && notebookId) {
-        console.log('This is the first source, checking notebook generation status...');
+        logger.log('This is the first source, checking notebook generation status...');
         
         // Check notebook generation status
         const { data: notebook } = await supabase
@@ -147,7 +148,7 @@ export const useSources = (notebookId?: string) => {
           .single();
         
         if (notebook?.generation_status === 'pending') {
-          console.log('Triggering notebook content generation...');
+          logger.log('Triggering notebook content generation...');
           
           // Determine if we can trigger generation based on source type and available data
           const canGenerate = 
@@ -165,10 +166,10 @@ export const useSources = (notebookId?: string) => {
                 sourceType: newSource.type
               });
             } catch (error) {
-              console.error('Failed to generate notebook content:', error);
+              logger.error('Failed to generate notebook content:', error);
             }
           } else {
-            console.log('Source not ready for generation yet - missing required data');
+            logger.log('Source not ready for generation yet - missing required data');
           }
         }
       }
@@ -210,7 +211,7 @@ export const useSources = (notebookId?: string) => {
             .single();
           
           if (notebook?.generation_status === 'pending') {
-            console.log('File path updated, triggering notebook content generation...');
+            logger.log('File path updated, triggering notebook content generation...');
             
             try {
               await generateNotebookContentAsync({
@@ -219,7 +220,7 @@ export const useSources = (notebookId?: string) => {
                 sourceType: updatedSource.type
               });
             } catch (error) {
-              console.error('Failed to generate notebook content:', error);
+              logger.error('Failed to generate notebook content:', error);
             }
           }
         }

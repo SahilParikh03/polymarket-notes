@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 
 import { useState, useEffect } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -26,7 +27,7 @@ export const useAudioOverview = (notebookId?: string) => {
           filter: `id=eq.${notebookId}`
         },
         (payload) => {
-          console.log('Notebook updated:', payload);
+          logger.log('Notebook updated:', payload);
           const newData = payload.new as any;
           
           if (newData.audio_overview_generation_status) {
@@ -69,17 +70,17 @@ export const useAudioOverview = (notebookId?: string) => {
       });
 
       if (error) {
-        console.error('Error starting audio generation:', error);
+        logger.error('Error starting audio generation:', error);
         throw error;
       }
 
       return data;
     },
     onSuccess: (data, notebookId) => {
-      console.log('Audio generation started successfully:', data);
+      logger.log('Audio generation started successfully:', data);
     },
     onError: (error) => {
-      console.error('Audio generation failed to start:', error);
+      logger.error('Audio generation failed to start:', error);
       setIsGenerating(false);
       setGenerationStatus(null);
       
@@ -102,14 +103,14 @@ export const useAudioOverview = (notebookId?: string) => {
       });
 
       if (error) {
-        console.error('Error refreshing audio URL:', error);
+        logger.error('Error refreshing audio URL:', error);
         throw error;
       }
 
       return data;
     },
     onSuccess: (data, variables) => {
-      console.log('Audio URL refreshed successfully:', data);
+      logger.log('Audio URL refreshed successfully:', data);
       // Invalidate queries to refresh the UI with new URL
       queryClient.invalidateQueries({ queryKey: ['notebooks'] });
       
@@ -118,7 +119,7 @@ export const useAudioOverview = (notebookId?: string) => {
       }
     },
     onError: (error, variables) => {
-      console.error('Failed to refresh audio URL:', error);
+      logger.error('Failed to refresh audio URL:', error);
       if (!variables.silent) {
         setIsAutoRefreshing(false);
         toast({
@@ -137,11 +138,11 @@ export const useAudioOverview = (notebookId?: string) => {
 
   const autoRefreshIfExpired = async (notebookId: string, expiresAt: string | null) => {
     if (checkAudioExpiry(expiresAt) && !isAutoRefreshing && !refreshAudioUrl.isPending) {
-      console.log('Audio URL expired, auto-refreshing...');
+      logger.log('Audio URL expired, auto-refreshing...');
       try {
         await refreshAudioUrl.mutateAsync({ notebookId, silent: true });
       } catch (error) {
-        console.error('Auto-refresh failed:', error);
+        logger.error('Auto-refresh failed:', error);
       }
     }
   };

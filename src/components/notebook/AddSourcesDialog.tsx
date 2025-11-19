@@ -10,6 +10,7 @@ import { useDocumentProcessing } from '@/hooks/useDocumentProcessing';
 import { useNotebookGeneration } from '@/hooks/useNotebookGeneration';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/utils/logger';
 
 interface AddSourcesDialogProps {
   open: boolean;
@@ -88,7 +89,7 @@ const AddSourcesDialog = ({
 
   const processFileAsync = async (file: File, sourceId: string, notebookId: string) => {
     try {
-      console.log('Starting file processing for:', file.name, 'source:', sourceId);
+      logger.log('Starting file processing for:', file.name, 'source:', sourceId);
       const fileType = file.type.includes('pdf') ? 'pdf' : file.type.includes('audio') ? 'audio' : 'text';
 
       // Update status to uploading
@@ -104,7 +105,7 @@ const AddSourcesDialog = ({
       if (!filePath) {
         throw new Error('File upload failed - no file path returned');
       }
-      console.log('File uploaded successfully:', filePath);
+      logger.log('File uploaded successfully:', filePath);
 
       // Update with file path and set to processing
       updateSource({
@@ -123,12 +124,12 @@ const AddSourcesDialog = ({
         }
       }).then(({ data, error }) => {
         if (error) {
-          console.error('Custom processing initiation failed:', error);
+          logger.error('Custom processing initiation failed:', error);
         } else {
-          console.log('Custom processing initiated:', data);
+          logger.log('Custom processing initiated:', data);
         }
       }).catch(err => {
-        console.error('Custom processing error:', err);
+        logger.error('Custom processing error:', err);
       });
 
       // Start document processing (N8N workflow)
@@ -145,9 +146,9 @@ const AddSourcesDialog = ({
           filePath,
           sourceType: fileType
         });
-        console.log('Document processing completed for:', sourceId);
+        logger.log('Document processing completed for:', sourceId);
       } catch (processingError) {
-        console.error('Document processing failed:', processingError);
+        logger.error('Document processing failed:', processingError);
 
         // Update to completed with basic info if processing fails
         updateSource({
@@ -158,7 +159,7 @@ const AddSourcesDialog = ({
         });
       }
     } catch (error) {
-      console.error('File processing failed for:', file.name, error);
+      logger.error('File processing failed for:', file.name, error);
 
       // Update status to failed
       updateSource({
@@ -180,7 +181,7 @@ const AddSourcesDialog = ({
       return;
     }
 
-    console.log('Processing multiple files with delay strategy:', files.length);
+    logger.log('Processing multiple files with delay strategy:', files.length);
     setIsLocallyProcessing(true);
 
     try {
@@ -199,14 +200,14 @@ const AddSourcesDialog = ({
         }
       };
       
-      console.log('Creating first source for:', firstFile.name);
+      logger.log('Creating first source for:', firstFile.name);
       const firstSource = await addSourceAsync(firstSourceData);
       
       let remainingSources = [];
       
       // Step 2: If there are more files, add a delay before creating the rest
       if (files.length > 1) {
-        console.log('Adding 150ms delay before creating remaining sources...');
+        logger.log('Adding 150ms delay before creating remaining sources...');
         await new Promise(resolve => setTimeout(resolve, 150));
         
         // Create remaining sources
@@ -223,17 +224,17 @@ const AddSourcesDialog = ({
               fileType: file.type
             }
           };
-          console.log('Creating source for:', file.name);
+          logger.log('Creating source for:', file.name);
           return await addSourceAsync(sourceData);
         }));
         
-        console.log('Remaining sources created:', remainingSources.length);
+        logger.log('Remaining sources created:', remainingSources.length);
       }
 
       // Combine all created sources
       const allCreatedSources = [firstSource, ...remainingSources];
 
-      console.log('All sources created successfully:', allCreatedSources.length);
+      logger.log('All sources created successfully:', allCreatedSources.length);
 
       // Step 3: Close dialog immediately
       setIsLocallyProcessing(false);
@@ -247,7 +248,7 @@ const AddSourcesDialog = ({
         const successful = results.filter(r => r.status === 'fulfilled').length;
         const failed = results.filter(r => r.status === 'rejected').length;
 
-        console.log('File processing completed:', {
+        logger.log('File processing completed:', {
           successful,
           failed
         });
@@ -273,7 +274,7 @@ const AddSourcesDialog = ({
         }
       });
     } catch (error) {
-      console.error('Error creating sources:', error);
+      logger.error('Error creating sources:', error);
       setIsLocallyProcessing(false);
       toast({
         title: "Error",
@@ -322,7 +323,7 @@ const AddSourcesDialog = ({
         description: "Text has been added and sent for processing"
       });
     } catch (error) {
-      console.error('Error adding text source:', error);
+      logger.error('Error adding text source:', error);
       toast({
         title: "Error",
         description: "Failed to add text source",
@@ -340,7 +341,7 @@ const AddSourcesDialog = ({
     setIsLocallyProcessing(true);
 
     try {
-      console.log('Creating sources for multiple websites with delay strategy:', urls.length);
+      logger.log('Creating sources for multiple websites with delay strategy:', urls.length);
       
       // Create the first source immediately (this will trigger generation if it's the first source)
       const firstSource = await addSourceAsync({
@@ -355,13 +356,13 @@ const AddSourcesDialog = ({
         }
       });
       
-      console.log('First source created:', firstSource.id);
+      logger.log('First source created:', firstSource.id);
       
       let remainingSources = [];
       
       // If there are more URLs, add a delay before creating the rest
       if (urls.length > 1) {
-        console.log('Adding 150ms delay before creating remaining sources...');
+        logger.log('Adding 150ms delay before creating remaining sources...');
         await new Promise(resolve => setTimeout(resolve, 150));
         
         // Create remaining sources
@@ -379,7 +380,7 @@ const AddSourcesDialog = ({
           });
         }));
         
-        console.log('Remaining sources created:', remainingSources.length);
+        logger.log('Remaining sources created:', remainingSources.length);
       }
 
       // Combine all created sources
@@ -407,7 +408,7 @@ const AddSourcesDialog = ({
 
       onOpenChange(false);
     } catch (error) {
-      console.error('Error adding multiple websites:', error);
+      logger.error('Error adding multiple websites:', error);
       toast({
         title: "Error",
         description: "Failed to add websites",

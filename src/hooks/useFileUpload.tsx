@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
@@ -17,7 +18,7 @@ export const useFileUpload = () => {
       // Create file path: sources/{notebook_id}/{source_id}.{extension}
       const filePath = `${notebookId}/${sourceId}.${fileExtension}`;
       
-      console.log('Uploading file to:', filePath);
+      logger.log('Uploading file to:', filePath);
       
       // Upload file to Supabase storage
       const { data, error } = await supabase.storage
@@ -28,14 +29,14 @@ export const useFileUpload = () => {
         });
 
       if (error) {
-        console.error('Upload error:', error);
+        logger.error('Upload error:', error);
         throw error;
       }
 
-      console.log('File uploaded successfully:', data);
+      logger.log('File uploaded successfully:', data);
       return filePath;
     } catch (error) {
-      console.error('File upload failed:', error);
+      logger.error('File upload failed:', error);
       // Error will be handled by parent component via Promise.allSettled
       return null;
     } finally {

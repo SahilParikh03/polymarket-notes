@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Trash2 } from 'lucide-react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useNotebookDelete } from '@/hooks/useNotebookDelete';
+import { logger } from '@/utils/logger';
 
 interface NotebookCardProps {
   notebook: {
@@ -27,14 +28,14 @@ const NotebookCard = ({
   const handleDeleteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    console.log('Delete button clicked for notebook:', notebook.id);
+    logger.log('Delete button clicked for notebook:', notebook.id);
     setShowDeleteDialog(true);
   };
 
   const handleConfirmDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    console.log('Confirming delete for notebook:', notebook.id);
+    logger.log('Confirming delete for notebook:', notebook.id);
     deleteNotebook(notebook.id);
     setShowDeleteDialog(false);
   };

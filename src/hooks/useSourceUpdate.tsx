@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -11,7 +12,7 @@ export const useSourceUpdate = () => {
 
   const updateSource = useMutation({
     mutationFn: async ({ sourceId, title }: { sourceId: string; title: string }) => {
-      console.log('Updating source:', sourceId, 'with title:', title);
+      logger.log('Updating source:', sourceId, 'with title:', title);
       
       const { data, error } = await supabase
         .from('sources')
@@ -21,15 +22,15 @@ export const useSourceUpdate = () => {
         .single();
 
       if (error) {
-        console.error('Error updating source:', error);
+        logger.error('Error updating source:', error);
         throw error;
       }
       
-      console.log('Source updated successfully');
+      logger.log('Source updated successfully');
       return data;
     },
     onSuccess: () => {
-      console.log('Update mutation success, invalidating queries');
+      logger.log('Update mutation success, invalidating queries');
       queryClient.invalidateQueries({ queryKey: ['sources'] });
       toast({
         title: "Source renamed",
@@ -37,7 +38,7 @@ export const useSourceUpdate = () => {
       });
     },
     onError: (error) => {
-      console.error('Update mutation error:', error);
+      logger.error('Update mutation error:', error);
       toast({
         title: "Error",
         description: "Failed to rename the source. Please try again.",

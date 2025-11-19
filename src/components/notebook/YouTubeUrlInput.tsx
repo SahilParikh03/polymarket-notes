@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 
 import React, { useState } from 'react';
 import {
@@ -31,7 +32,7 @@ const YouTubeUrlInput = ({ open, onOpenChange, onSubmit }: YouTubeUrlInputProps)
       setUrl('');
       onOpenChange(false);
     } catch (error) {
-      console.error('Error adding YouTube source:', error);
+      logger.error('Error adding YouTube source:', error);
     } finally {
       setIsLoading(false);
     }

@@ -11,6 +11,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import NoteEditor from './NoteEditor';
 import AudioPlayer from './AudioPlayer';
 import { Citation } from '@/types/message';
+import { logger } from '@/utils/logger';
 
 interface StudioSidebarProps {
   notebookId?: string;
@@ -65,7 +66,7 @@ const StudioSidebar = ({
     
     const checkAndRefresh = async () => {
       if (checkAudioExpiry(notebook.audio_url_expires_at)) {
-        console.log('Detected expired audio URL, initiating auto-refresh...');
+        logger.log('Detected expired audio URL, initiating auto-refresh...');
         await autoRefreshIfExpired(notebookId, notebook.audio_url_expires_at);
       }
     };
@@ -85,7 +86,7 @@ const StudioSidebar = ({
   };
 
   const handleEditNote = (note: Note) => {
-    console.log('StudioSidebar: Opening note', {
+    logger.log('StudioSidebar: Opening note', {
       noteId: note.id,
       sourceType: note.source_type
     });

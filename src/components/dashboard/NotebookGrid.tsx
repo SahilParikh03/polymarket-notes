@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 
 import React, { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
@@ -43,11 +44,11 @@ const NotebookGrid = () => {
       description: ''
     }, {
       onSuccess: data => {
-        console.log('Navigating to notebook:', data.id);
+        logger.log('Navigating to notebook:', data.id);
         navigate(`/notebook/${data.id}`);
       },
       onError: error => {
-        console.error('Failed to create notebook:', error);
+        logger.error('Failed to create notebook:', error);
       }
     });
   };
@@ -57,7 +58,7 @@ const NotebookGrid = () => {
     const target = e.target as HTMLElement;
     const isDeleteAction = target.closest('[data-delete-action="true"]') || target.closest('.delete-button') || target.closest('[role="dialog"]');
     if (isDeleteAction) {
-      console.log('Click prevented due to delete action');
+      logger.log('Click prevented due to delete action');
       return;
     }
     navigate(`/notebook/${notebookId}`);

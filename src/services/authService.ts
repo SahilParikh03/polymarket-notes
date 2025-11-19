@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
@@ -21,7 +22,7 @@ export const useLogout = () => {
       navigate('/auth', { replace: true });
       
     } catch (error: any) {
-      console.error('Logout error:', error);
+      logger.error('Logout error:', error);
       
       // Even if there's an error, redirect to auth page
       toast({

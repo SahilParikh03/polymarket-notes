@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -35,7 +36,7 @@ const CopiedTextDialog = ({
           }
         })
         .catch(err => {
-          console.log('Could not read clipboard:', err);
+          logger.log('Could not read clipboard:', err);
         });
     }
   }, [open]);
@@ -52,7 +53,7 @@ const CopiedTextDialog = ({
       setContent('');
       onOpenChange(false);
     } catch (error) {
-      console.error('Error submitting copied text:', error);
+      logger.error('Error submitting copied text:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -75,7 +76,7 @@ const CopiedTextDialog = ({
         }
       }
     } catch (err) {
-      console.error('Could not read clipboard:', err);
+      logger.error('Could not read clipboard:', err);
     }
   };
 

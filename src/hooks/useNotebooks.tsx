@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
@@ -17,11 +18,11 @@ export const useNotebooks = () => {
     queryKey: ['notebooks', user?.id],
     queryFn: async () => {
       if (!user) {
-        console.log('No user found, returning empty notebooks array');
+        logger.log('No user found, returning empty notebooks array');
         return [];
       }
       
-      console.log('Fetching notebooks for user:', user.id);
+      logger.log('Fetching notebooks for user:', user.id);
       
       // First get the notebooks
       const { data: notebooksData, error: notebooksError } = await supabase
@@ -31,7 +32,7 @@ export const useNotebooks = () => {
         .order('updated_at', { ascending: false });
 
       if (notebooksError) {
-        console.error('Error fetching notebooks:', notebooksError);
+        logger.error('Error fetching notebooks:', notebooksError);
         throw notebooksError;
       }
 
@@ -44,7 +45,7 @@ export const useNotebooks = () => {
             .eq('notebook_id', notebook.id);
 
           if (countError) {
-            console.error('Error fetching source count for notebook:', notebook.id, countError);
+            logger.error('Error fetching source count for notebook:', notebook.id, countError);
             return { ...notebook, sources: [{ count: 0 }] };
           }
 
@@ -52,7 +53,7 @@ export const useNotebooks = () => {
         })
       );
 
-      console.log('Fetched notebooks:', notebooksWithCounts?.length || 0);
+      logger.log('Fetched notebooks:', notebooksWithCounts?.length || 0);
       return notebooksWithCounts || [];
     },
     enabled: isAuthenticated && !authLoading,
@@ -69,7 +70,7 @@ export const useNotebooks = () => {
   useEffect(() => {
     if (!user?.id || !isAuthenticated) return;
 
-    console.log('Setting up real-time subscription for notebooks');
+    logger.log('Setting up real-time subscription for notebooks');
 
     const channel = supabase
       .channel('notebooks-changes')
@@ -82,7 +83,7 @@ export const useNotebooks = () => {
           filter: `user_id=eq.${user.id}`
         },
         (payload) => {
-          console.log('Real-time notebook update received:', payload);
+          logger.log('Real-time notebook update received:', payload);
           
           // Invalidate and refetch notebooks when any change occurs
           queryClient.invalidateQueries({ queryKey: ['notebooks', user.id] });
@@ -91,18 +92,18 @@ export const useNotebooks = () => {
       .subscribe();
 
     return () => {
-      console.log('Cleaning up real-time subscription');
+      logger.log('Cleaning up real-time subscription');
       supabase.removeChannel(channel);
     };
   }, [user?.id, isAuthenticated, queryClient]);
 
   const createNotebook = useMutation({
     mutationFn: async (notebookData: { title: string; description?: string }) => {
-      console.log('Creating notebook with data:', notebookData);
-      console.log('Current user:', user?.id);
+      logger.log('Creating notebook with data:', notebookData);
+      logger.log('Current user:', user?.id);
       
       if (!user) {
-        console.error('User not authenticated');
+        logger.error('User not authenticated');
         throw new Error('User not authenticated');
       }
 
@@ -118,19 +119,19 @@ export const useNotebooks = () => {
         .single();
 
       if (error) {
-        console.error('Error creating notebook:', error);
+        logger.error('Error creating notebook:', error);
         throw error;
       }
       
-      console.log('Notebook created successfully:', data);
+      logger.log('Notebook created successfully:', data);
       return data;
     },
     onSuccess: (data) => {
-      console.log('Mutation success, invalidating queries');
+      logger.log('Mutation success, invalidating queries');
       queryClient.invalidateQueries({ queryKey: ['notebooks', user?.id] });
     },
     onError: (error) => {
-      console.error('Mutation error:', error);
+      logger.error('Mutation error:', error);
     },
   });
 

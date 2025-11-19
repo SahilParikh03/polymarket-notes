@@ -11,6 +11,7 @@ import MarkdownRenderer from '@/components/chat/MarkdownRenderer';
 import SaveToNoteButton from './SaveToNoteButton';
 import AddSourcesDialog from './AddSourcesDialog';
 import { Citation } from '@/types/message';
+import { logger } from '@/utils/logger';
 
 interface ChatAreaProps {
   hasSource: boolean;
@@ -107,7 +108,7 @@ const ChatArea = ({
         // Show AI loading after user message is sent
         setShowAiLoading(true);
       } catch (error) {
-        console.error('Failed to send message:', error);
+        logger.error('Failed to send message:', error);
         // Clear pending message on error
         setPendingUserMessage(null);
         setShowAiLoading(false);
@@ -116,7 +117,7 @@ const ChatArea = ({
   };
   const handleRefreshChat = () => {
     if (notebookId) {
-      console.log('Refresh button clicked for notebook:', notebookId);
+      logger.log('Refresh button clicked for notebook:', notebookId);
       deleteChatHistory(notebookId);
       // Reset clicked questions when chat is refreshed
       setClickedQuestions(new Set());

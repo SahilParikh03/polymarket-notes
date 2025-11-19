@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
@@ -16,9 +17,9 @@ const SaveToNoteButton = ({ content, notebookId, onSaved }: SaveToNoteButtonProp
   const handleSaveToNote = () => {
     if (!notebookId) return;
     
-    console.log('SaveToNoteButton: Saving content:', content);
-    console.log('SaveToNoteButton: Content type:', typeof content);
-    console.log('SaveToNoteButton: Is object with segments:', typeof content === 'object' && content && 'segments' in content);
+    logger.log('SaveToNoteButton: Saving content:', content);
+    logger.log('SaveToNoteButton: Content type:', typeof content);
+    logger.log('SaveToNoteButton: Is object with segments:', typeof content === 'object' && content && 'segments' in content);
     
     // Handle both string content and enhanced content with citations
     let contentText: string;
@@ -30,7 +31,7 @@ const SaveToNoteButton = ({ content, notebookId, onSaved }: SaveToNoteButtonProp
     const isAIResponse = typeof content === 'object' && content && 'segments' in content && Array.isArray(content.segments);
     
     if (isAIResponse) {
-      console.log('SaveToNoteButton: Detected AI response with segments');
+      logger.log('SaveToNoteButton: Detected AI response with segments');
       // For AI responses with citations, save the structured content as JSON
       contentText = JSON.stringify(content);
       // Generate title from the first segment's text
@@ -45,7 +46,7 @@ const SaveToNoteButton = ({ content, notebookId, onSaved }: SaveToNoteButtonProp
         .join(' ')
         .substring(0, 200);
     } else {
-      console.log('SaveToNoteButton: Detected user message');
+      logger.log('SaveToNoteButton: Detected user message');
       // For simple string content (typically user messages)
       const contentString = typeof content === 'string' ? content : String(content);
       contentText = contentString;
@@ -55,8 +56,8 @@ const SaveToNoteButton = ({ content, notebookId, onSaved }: SaveToNoteButtonProp
       extracted_text = undefined; // User notes don't need extracted text
     }
     
-    console.log('SaveToNoteButton: Final source_type:', source_type);
-    console.log('SaveToNoteButton: Final title:', title);
+    logger.log('SaveToNoteButton: Final source_type:', source_type);
+    logger.log('SaveToNoteButton: Final title:', title);
     
     createNote({ title, content: contentText, source_type, extracted_text });
     onSaved?.();

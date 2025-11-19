@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 
 import React, { useState } from 'react';
 import {
@@ -31,7 +32,7 @@ const WebsiteUrlInput = ({ open, onOpenChange, onSubmit }: WebsiteUrlInputProps)
       setUrl('');
       onOpenChange(false);
     } catch (error) {
-      console.error('Error adding website source:', error);
+      logger.error('Error adding website source:', error);
     } finally {
       setIsLoading(false);
     }

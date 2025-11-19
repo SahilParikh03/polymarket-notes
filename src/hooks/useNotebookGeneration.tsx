@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -13,7 +14,7 @@ export const useNotebookGeneration = () => {
       filePath?: string;
       sourceType: string;
     }) => {
-      console.log('Starting notebook content generation for:', notebookId, 'with source type:', sourceType);
+      logger.log('Starting notebook content generation for:', notebookId, 'with source type:', sourceType);
       
       const { data, error } = await supabase.functions.invoke('generate-notebook-content', {
         body: {
@@ -24,14 +25,14 @@ export const useNotebookGeneration = () => {
       });
 
       if (error) {
-        console.error('Edge function error:', error);
+        logger.error('Edge function error:', error);
         throw error;
       }
 
       return data;
     },
     onSuccess: (data) => {
-      console.log('Notebook generation successful:', data);
+      logger.log('Notebook generation successful:', data);
       
       // Invalidate relevant queries to refresh the UI
       queryClient.invalidateQueries({ queryKey: ['notebooks'] });
@@ -43,7 +44,7 @@ export const useNotebookGeneration = () => {
       });
     },
     onError: (error) => {
-      console.error('Notebook generation failed:', error);
+      logger.error('Notebook generation failed:', error);
       
       toast({
         title: "Generation Failed",

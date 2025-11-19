@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -135,7 +136,7 @@ const SourcesSidebar = ({
   };
 
   const handleSourceClick = (source: any) => {
-    console.log('SourcesSidebar: Source clicked from list', {
+    logger.log('SourcesSidebar: Source clicked from list', {
       sourceId: source.id,
       sourceTitle: source.title
     });
@@ -159,7 +160,7 @@ const SourcesSidebar = ({
       // Deliberately omitting chunk_lines_from and chunk_lines_to to prevent auto-scroll
     };
 
-    console.log('SourcesSidebar: Created mock citation', mockCitation);
+    logger.log('SourcesSidebar: Created mock citation', mockCitation);
 
     // Set the mock citation after a small delay to ensure state is clean
     setTimeout(() => {
@@ -170,7 +171,7 @@ const SourcesSidebar = ({
   };
 
   const handleBackToSources = () => {
-    console.log('SourcesSidebar: Back to sources clicked');
+    logger.log('SourcesSidebar: Back to sources clicked');
     setSelectedSourceForViewing(null);
     onCitationClose?.();
   };
@@ -185,7 +186,7 @@ const SourcesSidebar = ({
 
   // If we have a selected citation, show the content viewer
   if (selectedCitation) {
-    console.log('SourcesSidebar: Rendering content viewer for citation', {
+    logger.log('SourcesSidebar: Rendering content viewer for citation', {
       citationId: selectedCitation.citation_id,
       sourceId: selectedCitation.source_id,
       hasLineData: !!(selectedCitation.chunk_lines_from && selectedCitation.chunk_lines_to),

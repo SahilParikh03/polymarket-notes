@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
@@ -20,7 +21,7 @@ const AuthForm = () => {
   // Redirect to dashboard if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      console.log('User is authenticated, redirecting to dashboard');
+      logger.log('User is authenticated, redirecting to dashboard');
       navigate('/dashboard', { replace: true });
     }
   }, [isAuthenticated, navigate]);
@@ -30,7 +31,7 @@ const AuthForm = () => {
     setLoading(true);
 
     try {
-      console.log('Attempting sign in for:', email);
+      logger.log('Attempting sign in for:', email);
       
       const { error, data } = await supabase.auth.signInWithPassword({
         email,
@@ -38,7 +39,7 @@ const AuthForm = () => {
       });
       
       if (error) {
-        console.error('Sign in error:', error);
+        logger.error('Sign in error:', error);
         if (error.message.includes('Invalid login credentials')) {
           throw new Error('Invalid email or password. Please check your credentials and try again.');
         } else if (error.message.includes('Email not confirmed')) {
@@ -48,7 +49,7 @@ const AuthForm = () => {
         }
       }
       
-      console.log('Sign in successful:', data.user?.email);
+      logger.log('Sign in successful:', data.user?.email);
       
       toast({
         title: "Welcome back!",
@@ -58,7 +59,7 @@ const AuthForm = () => {
       // The AuthContext will handle the redirect automatically
       
     } catch (error: any) {
-      console.error('Auth form error:', error);
+      logger.error('Auth form error:', error);
       toast({
         title: "Sign In Error",
         description: error.message,
