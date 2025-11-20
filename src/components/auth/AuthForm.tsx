@@ -9,11 +9,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { Chrome } from 'lucide-react';
 
 const AuthForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
@@ -32,12 +34,12 @@ const AuthForm = () => {
 
     try {
       logger.log('Attempting sign in for:', email);
-      
+
       const { error, data } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
-      
+
       if (error) {
         logger.error('Sign in error:', error);
         if (error.message.includes('Invalid login credentials')) {
@@ -48,16 +50,16 @@ const AuthForm = () => {
           throw error;
         }
       }
-      
+
       logger.log('Sign in successful:', data.user?.email);
-      
+
       toast({
         title: "Welcome back!",
         description: "You have successfully signed in.",
       });
 
       // The AuthContext will handle the redirect automatically
-      
+
     } catch (error: any) {
       logger.error('Auth form error:', error);
       toast({
@@ -67,6 +69,38 @@ const AuthForm = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setGoogleLoading(true);
+
+    try {
+      logger.log('Attempting Google sign in');
+
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/dashboard`,
+        },
+      });
+
+      if (error) {
+        logger.error('Google sign in error:', error);
+        throw error;
+      }
+
+      // User will be redirected to Google for authentication
+      logger.log('Redirecting to Google for authentication');
+
+    } catch (error: any) {
+      logger.error('Google auth error:', error);
+      toast({
+        title: "Google Sign In Error",
+        description: error.message || "Failed to sign in with Google. Please try again.",
+        variant: "destructive",
+      });
+      setGoogleLoading(false);
     }
   };
 
@@ -103,10 +137,32 @@ const AuthForm = () => {
               minLength={6}
             />
           </div>
-          <Button type="submit" className="w-full" disabled={loading}>
+          <Button type="submit" className="w-full" disabled={loading || googleLoading}>
             {loading ? 'Signing In...' : 'Sign In'}
           </Button>
         </form>
+
+        {/* Divider */}
+        <div className="relative my-6">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-white px-2 text-muted-foreground">Or continue with</span>
+          </div>
+        </div>
+
+        {/* Google Sign In Button */}
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full"
+          onClick={handleGoogleSignIn}
+          disabled={loading || googleLoading}
+        >
+          <Chrome className="mr-2 h-4 w-4" />
+          {googleLoading ? 'Signing in...' : 'Sign in with Google'}
+        </Button>
       </CardContent>
     </Card>
   );
